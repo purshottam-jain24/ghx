@@ -7,8 +7,6 @@ const { generateKey } = require("../ssh/keygen");
 const { addKeyToAgent } = require("../ssh/agent");
 const { addHostToConfig } = require("../ssh/config");
 const { loadConfig, saveConfig } = require("../config/loadConfig");
-// Need to require saveConfig from saveConfig.js but loadConfig exports both?
-// Wait, I separated them.
 const { saveConfig: saveConfigFunc } = require("../config/saveConfig");
 
 async function setupFirstAccount() {
@@ -36,13 +34,11 @@ async function setupFirstAccount() {
   await addKeyToAgent(keyPath);
   await addHostToConfig("github.com", keyPath);
 
-  // Set Global Git Config
   const git = simpleGit();
   console.log(chalk.blue("Setting global git config..."));
   await git.addConfig("user.name", answers.name, true, "global");
   await git.addConfig("user.email", answers.email, true, "global");
 
-  // Save to config.json
   config.accounts.push({
     id: "default",
     username: answers.username,

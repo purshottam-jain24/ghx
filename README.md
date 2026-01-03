@@ -27,13 +27,13 @@ curl -fsSL https://github.com/purshottam-jain24/ghx/releases/latest/download/ins
 ### npm
 
 ```bash
-npm install -g @px24/ghx
+npm install -g @purshottam-jain24/ghx
 ```
 
 ### pnpm
 
 ```bash
-pnpm add -g @px24/ghx
+pnpm add -g @purshottam-jain24/ghx
 ```
 
 ## Updates

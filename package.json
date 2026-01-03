@@ -1,7 +1,10 @@
 {
-  "name": "ghx",
+  "name": "@purshottam-jain24/ghx",
   "version": "1.0.0",
   "description": "GitHub Account Manager CLI by Purshottam Jain",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "bin/ghx.js",
   "bin": {
     "ghx": "bin/ghx.js"

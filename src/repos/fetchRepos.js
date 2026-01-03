@@ -22,7 +22,6 @@ async function fetchRepos(token) {
       affiliation: "owner,collaborator,organization_member",
     });
 
-    // Node 18 native fetch
     const response = await fetch(
       `https://api.github.com/user/repos?${params}`,
       {

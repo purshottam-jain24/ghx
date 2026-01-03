@@ -15,7 +15,6 @@ async function addHostToConfig(host, identityFile) {
 
     const hostBlock = `Host ${host}`;
 
-    // Simple check if host block exists (not robust parser but fits "additive" rule)
     if (configContent.includes(hostBlock)) {
       console.log(`Host block for ${host} already exists in config.`);
       return;

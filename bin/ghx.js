@@ -16,8 +16,17 @@ program
   .version(packageJson.version)
   .description("GHX - GitHub Account Manager")
   .action(async () => {
-    // console.log(chalk.blue('Welcome to GHX'));
-    await showMenu();
+    try {
+      console.log(
+        chalk.cyan.bold("\nGHX – GitHub Account Manager") +
+          chalk.gray("\nby Purshottam Jain\n")
+      );
+      await showMenu();
+    } catch (err) {
+      console.error(chalk.red("❌ Unexpected error:"));
+      console.error(err.message || err);
+      process.exit(1);
+    }
   });
 
 program.parse(process.argv);

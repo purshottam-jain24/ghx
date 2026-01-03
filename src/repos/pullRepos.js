@@ -16,13 +16,6 @@ async function pullRepos() {
     return;
   }
 
-  // Allow user to select which account context to use (for SSH host mapping)
-  // Or maybe we try to match them all?
-  // Strategy: We need to know which account (identity) we are syncing.
-  // The user request says "Repo Pull Logic" but doesn't explicitly say if it pulls ALL accounts or one.
-  // Logic 10 says "based on account".
-  // Let's ask user which account to pull for.
-
   const { accountId } = await inquirer.prompt([
     {
       type: "list",
@@ -36,7 +29,7 @@ async function pullRepos() {
   ]);
 
   const account = config.accounts.find((a) => a.id === accountId);
-  if (!account) return; // Should not happen
+  if (!account) return;
 
   console.log(chalk.blue(`Pulling repos for ${account.username}...`));
 
@@ -52,9 +45,6 @@ async function pullRepos() {
       return;
     }
 
-    // Filter?
-    // User request: "Collaboration Selection (Advanced but doable)"
-    // Let's implement basic filtering by owner.
     const owners = [...new Set(repos.map((r) => r.owner.login))];
     const { selectedOwners } = await inquirer.prompt([
       {
@@ -66,9 +56,6 @@ async function pullRepos() {
       },
     ]);
 
-    // Default base dir?
-    // Config has baseDir, let's fallback to current dir or prompt?
-    // Plan: config check.
     let baseDir = account.baseDir;
     if (!baseDir) {
       const answer = await inquirer.prompt([
@@ -81,7 +68,6 @@ async function pullRepos() {
       baseDir = answer.baseDir;
     }
 
-    // Expansion of ~ if needed
     if (baseDir.startsWith("~")) {
       baseDir = path.join(require("os").homedir(), baseDir.slice(1));
     }
@@ -94,51 +80,23 @@ async function pullRepos() {
       let folderName = repo.name;
       const potentialPath = path.join(baseDir, folderName);
 
-      // Conflict handling: if folder exists and not this repo?
-      // Simple check: if folder exists, is it this repo?
-      // If conflict -> folderName = repo.name + "_" + repo.owner.login
-
-      // This logic is simplified. Real logic checks git remote.
       if (await fs.pathExists(potentialPath)) {
-        // Check remote?
-        // For now, if exists, we assume it's the right one or user handles it.
-        // But requirement said: if folder exists -> folderName = repo.name + "_" + repo.owner
-        // We should check if it's the SAME repo.
-        // If it is same repo, we pull.
-        // If it is different repo (or empty dir?), we rename target.
-
-        // Let's implement the specific rule: "if folder exists: folderName = repo.name + "_" + repo.owner"
-        // Wait, rule: "Repo conflicts: repo -> repo_owner" works if there IS a conflict.
-        // Just renaming blindly if it exists might duplicate if we just pulled it yesterday.
-        // I should check if it needs pulling.
-
-        // Re-reading rule: "if folder exists: folderName = repo.name + "_" + repo.owner"
-        // This implies we don't want to collide with existing folders that might be from other owners.
-
-        // Intelligent check:
         const isGit = await fs.pathExists(path.join(potentialPath, ".git"));
         if (isGit) {
           const git = simpleGit(potentialPath);
           const remotes = await git.getRemotes(true);
           const origin = remotes.find((r) => r.name === "origin");
-          // Check if origin matches.
-          // If matches, pull.
-          // If not matches, change folderName.
           if (origin && origin.refs.fetch.includes(repo.full_name)) {
-            // It is the same repo, so pull.
           } else {
             folderName = `${repo.name}_${repo.owner.login}`;
           }
         } else {
-          // Folder exists but not git? Or maybe just name collision.
           folderName = `${repo.name}_${repo.owner.login}`;
         }
       }
 
       const targetPath = path.join(baseDir, folderName);
 
-      // Rewrite SSH URL
-      // git@github.com:owner/repo.git -> git@github.com-suffix:owner/repo.git
       let cloneUrl = repo.ssh_url;
       if (account.sshHost !== "github.com") {
         cloneUrl = cloneUrl.replace("github.com", account.sshHost);

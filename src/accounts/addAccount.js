@@ -28,7 +28,6 @@ async function addAccount() {
   await addKeyToAgent(keyPath);
   await addHostToConfig(sshHost, keyPath);
 
-  // Save to config.json
   config.accounts.push({
     id: suffix,
     username: answers.username,
