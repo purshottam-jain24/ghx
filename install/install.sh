@@ -2,8 +2,8 @@
 set -e
 
 REPO="purshottam-jain24/ghx"
-# BASE_URL="https://github.com/$REPO/releases/latest/download"
-BASE_URL="http://192.168.1.2:8000/dist"
+BASE_URL="https://github.com/$REPO/releases/latest/download"
+# BASE_URL="http://192.168.1.2:8000/dist"
 INSTALL_DIR="$HOME/.ghx/bin"
 BINARY="$INSTALL_DIR/ghx"
 
@@ -11,14 +11,14 @@ OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 
 if [[ "$OS" == "darwin" ]]; then
-  BIN_NAME="ghx-macos"
+  BIN_NAME="ghx-tool-macos"
   # if [[ "$ARCH" == "arm64" ]]; then
   #   BIN_NAME="ghx-macos-arm64"
   # else
   #   BIN_NAME="ghx-macos-x64"
   # fi
 else
-  BIN_NAME="ghx-linux"
+  BIN_NAME="ghx-tool-linux"
 fi
 
 mkdir -p "$INSTALL_DIR"
