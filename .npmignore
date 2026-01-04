@@ -1,0 +1,18 @@
+# GitHub release assets
+dist-pkg/
+ghx-linux
+ghx-macos*
+*.exe
+dist
+
+# Installers (GitHub only)
+install/
+install.ps1
+install.sh
+
+# Dev files
+.eslintrc*
+eslint.config.js
+.prettierrc
+.env
+node_modules/
