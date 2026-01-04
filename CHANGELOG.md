@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.1](https://github.com/purshottam-jain24/ghx/compare/v2.1.0...v2.1.1) (2026-01-04)
+
+### Bug Fixes
+
+*  binary build script and PowerShell installer for easier distribution. ([d75b03c](https://github.com/purshottam-jain24/ghx/commit/d75b03c5f647f1da7b7ed33bc126420453c96fe2))
+
 ## [2.1.0](https://github.com/purshottam-jain24/ghx/compare/v0.1.1...v2.1.0) (2026-01-04)
 
 ### Features
