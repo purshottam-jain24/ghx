@@ -1,6 +1,10 @@
-package-lock.json
-node_modules
-PUBLISHING.md
 dist/*
-TESTING_GUIDE.md
-pnpm-lock.yaml
+!.gitkeep
+node_modules
+.DS_Store
+npm-debug.log
+.vscode/
+.idea/
+.env
+coverage/
+# lockfiles should be committed for apps/CLIs

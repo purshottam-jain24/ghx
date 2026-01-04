@@ -14,7 +14,10 @@
     "lint": "eslint src/**",
     "lint:fix": "eslint src/** --fix",
     "format": "prettier --write src/**",
-    "build": "pkg . --out-path dist --targets node18-win-x64,node18-linux-x64,node18-macos-x64"
+    "build": "pkg . --out-path dist --targets node18-win-x64,node18-linux-x64,node18-macos-x64",
+    "build:binaries": "node scripts/build-binaries.js",
+    "check:version": "node scripts/check-version.js",
+    "release": "release-it"
   },
   "pkg": {
     "scripts": "src/**/*.js",
@@ -44,10 +47,12 @@
   "type": "commonjs",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@release-it/conventional-changelog": "^10.0.4",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "pkg": "^5.8.1",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "release-it": "^19.2.2"
   }
 }
