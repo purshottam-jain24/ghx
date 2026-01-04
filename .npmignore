@@ -1,18 +1,26 @@
-# GitHub release assets
-dist-pkg/
-ghx-linux
-ghx-macos*
-*.exe
-dist
+# Source and Build
+src/
+scripts/
+.github/
+.vscode/
+.idea/
 
-# Installers (GitHub only)
-install/
-install.ps1
-install.sh
-
-# Dev files
+# Testing & Linting
+TESTING_GUIDE.md
+PUBLISHING.md
 .eslintrc*
 eslint.config.js
 .prettierrc
-.env
-node_modules/
+
+# Git & Config
+.gitignore
+.gitattributes
+.release-it.json
+pnpm-lock.yaml
+
+# Binaries are built into dist by pkg, but for npm package we might want just the CLI entry point
+# "main" in package.json points to "bin/ghx.js", so we need that.
+# If compiling to binary for npm is not the goal (usually npm install installs the JS package + bin link), 
+# then we don't strictly need to ignore everything, but let's keep it clean.
+# Ensure 'bin' folder is NOT ignored.
+dist/

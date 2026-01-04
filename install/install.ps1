@@ -3,7 +3,7 @@ Write-Host "🚀 Installing GHX (by Purshottam Jain)..." -ForegroundColor Cyan
 $InstallDir = "$HOME\.ghx\bin"
 $Binary = "$InstallDir\ghx.exe"
 $Repo = "purshottam-jain24/ghx"
-$BaseUrl = "https://github.com/$Repo/releases/download"
+$BaseUrl = "https://github.com/$Repo/releases/latest/download"
 # $BaseUrl = "http://192.168.1.2:8000/dist"
 $BinaryName = "ghx-tool-win.exe"
 
