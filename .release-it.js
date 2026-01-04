@@ -9,7 +9,7 @@ module.exports = {
     release: true,
     releaseName: "v${version}",
     autoGenerate: false,
-    assets: ["dist/*"],
+    assets: ["dist/*", "install/*"],
   },
   npm: {
     publish: true,

@@ -4,12 +4,10 @@ const path = require("path");
 
 const distDir = path.join(__dirname, "../dist");
 
-// Clean dist directory
 console.log("Cleaning dist directory...");
 fs.removeSync(distDir);
 fs.ensureDirSync(distDir);
 
-// Build binaries using pkg
 console.log("Building binaries...");
 try {
   execSync(
