@@ -8,6 +8,7 @@ const { addKeyToAgent } = require("../ssh/agent");
 const { addHostToConfig } = require("../ssh/config");
 const { loadConfig, saveConfig } = require("../config/loadConfig");
 const { saveConfig: saveConfigFunc } = require("../config/saveConfig");
+const { promptAndTestConnection } = require("../ssh/testConnection");
 
 async function setupFirstAccount() {
   const config = await loadConfig();
@@ -36,8 +37,22 @@ async function setupFirstAccount() {
 
   const git = simpleGit();
   console.log(chalk.blue("Setting global git config..."));
-  await git.addConfig("user.name", answers.name, true, "global");
-  await git.addConfig("user.email", answers.email, true, "global");
+  try {
+    await git.addConfig("user.name", answers.name, true, "global");
+    await git.addConfig("user.email", answers.email, true, "global");
+  } catch (error) {
+    if (error.message.includes("ENOENT")) {
+      console.log(
+        chalk.red(
+          "❌ Git executable not found. Please ensure Git is installed and in your PATH."
+        )
+      );
+    } else {
+      console.log(
+        chalk.yellow(`⚠️  Failed to set git config: ${error.message}`)
+      );
+    }
+  }
 
   config.accounts.push({
     id: "default",
@@ -51,11 +66,54 @@ async function setupFirstAccount() {
   await saveConfigFunc(config);
 
   console.log(chalk.green("First account setup complete!"));
-  console.log(
-    chalk.yellow(
-      `\nIMPORTANT: Upload the public key to GitHub:\n${keyPath}.pub`
-    )
-  );
+
+  try {
+    const pubKeyContent = await require("fs-extra").readFile(
+      `${keyPath}.pub`,
+      "utf8"
+    );
+
+    try {
+      await require("clipboardy").write(pubKeyContent.trim());
+      console.log(chalk.green.bold("\n✅ Public Key copied to clipboard!"));
+    } catch (clipErr) {
+      console.log(chalk.red("\nCould not auto-copy to clipboard."));
+    }
+
+    console.log(chalk.yellow("\nIMPORTANT: Paste this key into GitHub:"));
+    console.log(chalk.cyan.underline("https://github.com/settings/ssh/new"));
+
+    console.log(
+      chalk.gray("\nSuggestion for 'Title': ") + chalk.white("My Device (GHX)")
+    );
+    console.log(
+      chalk.gray("Suggestion for 'Key':   ") +
+        chalk.white("(Paste the block below)")
+    );
+
+    console.log("\nIf the clipboard didn't work, here is the key:");
+    console.log(
+      chalk.cyan(
+        "--------------------------------------------------------------------------------"
+      )
+    );
+    console.log(pubKeyContent.trim());
+    console.log(
+      chalk.cyan(
+        "--------------------------------------------------------------------------------"
+      )
+    );
+  } catch (err) {
+    console.log(chalk.red(`\nCould not read public key: ${err.message}`));
+    console.log(
+      chalk.yellow(
+        `\nPlease open the following file manually and copy its content:`
+      )
+    );
+    console.log(chalk.white(`${keyPath}.pub`));
+  }
+
+  await promptAndTestConnection("github.com");
 }
 
 module.exports = { setupFirstAccount };

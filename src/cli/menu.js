@@ -14,11 +14,14 @@ async function showMenu() {
   console.log(chalk.gray("   by Purshottam Jain\n"));
 
   const choices = [
-    { name: "Setup GitHub (first time)", value: "setup" },
-    { name: "Add another GitHub account", value: "add" },
-    { name: "Pull repositories", value: "pull" },
-    { name: "Update GHX", value: "update" },
-    { name: "Exit", value: "exit" },
+    { name: "1. Setup GitHub (first time)", value: "setup" },
+    { name: "2. Add another GitHub account", value: "add" },
+    { name: "3. List all accounts", value: "list" },
+    { name: "4. Verify an account connection", value: "verify" },
+    { name: "5. Remove an account", value: "remove" },
+    { name: "6. Pull repositories", value: "pull" },
+    { name: "7. Update GHX", value: "update" },
+    { name: "8. Exit", value: "exit" },
   ];
 
   const { action } = await inquirer.prompt([
@@ -27,6 +30,7 @@ async function showMenu() {
       name: "action",
       message: "What would you like to do?",
       choices,
+      pageSize: 20,
     },
   ]);
 
@@ -36,6 +40,15 @@ async function showMenu() {
       break;
     case "add":
       await require("../accounts/addAccount").addAccount();
+      break;
+    case "list":
+      await require("../accounts/listAccounts").listAccounts();
+      break;
+    case "verify":
+      await require("../accounts/verifyAccount").verifyAccount();
+      break;
+    case "remove":
+      await require("../accounts/removeAccount").removeAccount();
       break;
     case "pull":
       await require("../repos/pullRepos").pullRepos();

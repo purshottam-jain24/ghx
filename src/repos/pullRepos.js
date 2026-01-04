@@ -79,20 +79,28 @@ async function pullRepos() {
 
       let folderName = repo.name;
       const potentialPath = path.join(baseDir, folderName);
+      let isConflict = false;
 
       if (await fs.pathExists(potentialPath)) {
-        const isGit = await fs.pathExists(path.join(potentialPath, ".git"));
-        if (isGit) {
-          const git = simpleGit(potentialPath);
-          const remotes = await git.getRemotes(true);
-          const origin = remotes.find((r) => r.name === "origin");
-          if (origin && origin.refs.fetch.includes(repo.full_name)) {
-          } else {
-            folderName = `${repo.name}_${repo.owner.login}`;
+        if (await fs.pathExists(path.join(potentialPath, ".git"))) {
+          try {
+            const git = simpleGit(potentialPath);
+            const remotes = await git.getRemotes(true);
+            const origin = remotes.find((r) => r.name === "origin");
+
+            if (!origin || !origin.refs.fetch.includes(repo.full_name)) {
+              isConflict = true;
+            }
+          } catch (e) {
+            isConflict = true;
           }
         } else {
-          folderName = `${repo.name}_${repo.owner.login}`;
+          isConflict = true;
         }
+      }
+
+      if (isConflict) {
+        folderName = `${repo.name}+${repo.owner.login}`;
       }
 
       const targetPath = path.join(baseDir, folderName);
@@ -109,11 +117,24 @@ async function pullRepos() {
       try {
         if (await fs.pathExists(targetPath)) {
           const git = simpleGit(targetPath);
+
+          await git.remote(["set-url", "origin", cloneUrl]);
+          await git.fetch("origin", ["+refs/heads/*:refs/remotes/origin/*"]);
+          await git.fetch(["--tags"]);
           await git.pull();
-          repoSpinner.succeed(`Pulled ${folderName}`);
+
+          repoSpinner.succeed(`Updated ${folderName}`);
         } else {
           await simpleGit().clone(cloneUrl, targetPath);
+          const git = simpleGit(targetPath);
+          await git.fetch(["--tags"]);
           repoSpinner.succeed(`Cloned ${folderName}`);
+        }
+
+        if (await fs.pathExists(path.join(targetPath, ".git"))) {
+          const git = simpleGit(targetPath);
+          await git.addConfig("user.name", account.username);
+          await git.addConfig("user.email", account.email);
         }
       } catch (err) {
         repoSpinner.fail(`Failed to sync ${folderName}: ${err.message}`);

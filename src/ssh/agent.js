@@ -12,7 +12,15 @@ async function addKeyToAgent(keyPath) {
     console.error(
       chalk.red(`Failed to add key to agent. Ensure ssh-agent is running.`)
     );
-    console.error(error.message);
+    if (process.platform === "win32") {
+      console.error(
+        chalk.yellow(
+          "On Windows, run this in Administrator PowerShell to fix:\n" +
+            "Get-Service ssh-agent | Set-Service -StartupType Automatic -PassThru | Start-Service"
+        )
+      );
+    }
+    console.error(chalk.gray(`Details: ${error.message}`));
   }
 }
 
