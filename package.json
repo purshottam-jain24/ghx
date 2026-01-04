@@ -1,6 +1,6 @@
 {
   "name": "ghx-tool",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "GitHub Account Manager CLI",
   "publishConfig": {
     "access": "public"
