@@ -4,14 +4,15 @@ $InstallDir = "$HOME\.ghx\bin"
 $Binary = "$InstallDir\ghx.exe"
 $Repo = "purshottam-jain24/ghx"
 $BaseUrl = "https://github.com/$Repo/releases/latest/download"
-# $BaseUrl = "http://192.168.1.2:8000/dist"
+# $BaseUrl = "http://192.168.1.8:8000/dist"
 $BinaryName = "ghx-tool-win.exe"
 
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 
 Write-Host "⬇️ Downloading GHX binary..." -ForegroundColor Blue
 try {
-    Invoke-WebRequest "$BaseUrl/$BinaryName" -OutFile $Binary
+    Import-Module BitsTransfer
+    Start-BitsTransfer -Source "$BaseUrl/$BinaryName" -Destination $Binary
 } catch {
     Write-Host "❌ Failed to download. Does the asset '$BinaryName' exist in the GitHub Release?" -ForegroundColor Red
     Read-Host "Press Enter to exit..."

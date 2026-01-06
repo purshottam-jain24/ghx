@@ -1,9 +1,17 @@
 {
   "name": "ghx-tool",
-  "version": "2.1.1",
+  "version": "2.1.3",
   "description": "GitHub Account Manager CLI",
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/purshottam-jain24/ghx.git"
+  },
+  "homepage": "https://github.com/purshottam-jain24/ghx#readme",
+  "bugs": {
+    "url": "https://github.com/purshottam-jain24/ghx/issues"
   },
   "main": "bin/ghx.js",
   "bin": {

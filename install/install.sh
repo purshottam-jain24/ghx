@@ -3,7 +3,7 @@ set -e
 
 REPO="purshottam-jain24/ghx"
 BASE_URL="https://github.com/$REPO/releases/latest/download"
-# BASE_URL="http://192.168.1.2:8000/dist"
+# BASE_URL="http://192.168.1.8:8000/dist"
 INSTALL_DIR="$HOME/.ghx/bin"
 BINARY="$INSTALL_DIR/ghx"
 
@@ -24,7 +24,7 @@ fi
 mkdir -p "$INSTALL_DIR"
 
 echo "⬇️ Downloading GHX ($BIN_NAME)..."
-if ! curl -fsSL "$BASE_URL/$BIN_NAME" -o "$BINARY"; then
+if ! curl --progress-bar -fL "$BASE_URL/$BIN_NAME" -o "$BINARY"; then
     echo "❌ Download failed. Does '$BIN_NAME' exist in the GitHub Release?"
     exit 1
 fi
