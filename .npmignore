@@ -1,6 +1,8 @@
-# Source and Build
-src/
+# Source and Build (src/ is required at runtime by bin/ghx.js)
 scripts/
+desktop/
+build/
+dist-desktop/
 .github/
 .vscode/
 .idea/

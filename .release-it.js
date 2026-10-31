@@ -5,14 +5,13 @@ module.exports = {
     tagName: "v${version}",
     push: true,
   },
+  // The GitHub release (via `gh`) and npm publish happen in the release
+  // workflow after the binaries and desktop apps are built for this tag
   github: {
-    release: true,
-    releaseName: "v${version}",
-    autoGenerate: false,
-    assets: ["dist/*", "install/*"],
+    release: false,
   },
   npm: {
-    publish: true,
+    publish: false,
   },
   plugins: {
     "@release-it/conventional-changelog": {

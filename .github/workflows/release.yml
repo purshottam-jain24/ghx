@@ -8,40 +8,15 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
-  # Apple Silicon binaries must be signed, which pkg only does on a macOS host
-  build-macos-arm64:
-    runs-on: macos-latest
-    if: "!contains(github.event.head_commit.message, 'chore(release):') && !contains(github.event.head_commit.message, '[skip ci]')"
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build macOS arm64 binary
-        run: npm run build:binaries -- macos-arm64
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: ghx-tool-macos-arm64
-          path: dist/ghx-tool-macos-arm64
-          if-no-files-found: error
-
-  release:
-    needs: build-macos-arm64
+  # Bumps the version, updates CHANGELOG.md and pushes the commit + tag.
+  # Building happens afterwards so every artifact embeds the new version.
+  version:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'chore(release):') && !contains(github.event.head_commit.message, '[skip ci]')"
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
 
     steps:
       - name: Checkout
@@ -54,7 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://registry.npmjs.org/
 
       - name: Configure Git User
         run: |
@@ -64,20 +38,128 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Build binaries
-        run: npm run build:binaries -- x64
-
-      - name: Download macOS arm64 binary
-        uses: actions/download-artifact@v4
-        with:
-          name: ghx-tool-macos-arm64
-          path: dist
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run release -- --ci --verbose
+      - name: Bump version and tag
+        id: bump
+        run: |
+          npm run release -- --ci --verbose
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
       - name: Verify version sync
         run: npm run check:version
+
+  cli-binaries:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.version.outputs.version }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Build CLI binaries (x64)
+        run: npm run build:binaries -- x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-x64
+          path: dist/*
+          if-no-files-found: error
+
+  # Apple Silicon binaries must be signed, which pkg only does on a macOS host
+  cli-macos-arm64:
+    needs: version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.version.outputs.version }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Build CLI binary (macOS arm64)
+        run: npm run build:binaries -- macos-arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-macos-arm64
+          path: dist/ghx-tool-macos-arm64
+          if-no-files-found: error
+
+  desktop:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: --mac
+          - os: windows-latest
+            target: --win
+          - os: ubuntu-latest
+            target: --linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.version.outputs.version }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Build desktop app
+        run: npm run desktop:dist -- ${{ matrix.target }}
+        env:
+          # No Apple/Windows signing certificates yet: ad-hoc sign on macOS only
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          path: |
+            dist-desktop/*.dmg
+            dist-desktop/*.exe
+            dist-desktop/*.AppImage
+            dist-desktop/*.deb
+          if-no-files-found: error
+
+  release:
+    needs: [version, cli-binaries, cli-macos-arm64, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.version.outputs.version }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          # Release notes are this version's section of CHANGELOG.md
+          awk -v v="$VERSION" '
+            /^##? \[?[0-9]+\.[0-9]+\.[0-9]+/ { if (found) exit; if (index($0, v)) { found=1; next } }
+            found { print }
+          ' CHANGELOG.md > notes.md || true
+          [ -s notes.md ] || echo "Release v$VERSION" > notes.md
+
+          gh release create "v$VERSION" \
+            --title "v$VERSION" \
+            --notes-file notes.md \
+            --verify-tag \
+            artifacts/* install/*
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
