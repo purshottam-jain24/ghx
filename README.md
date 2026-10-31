@@ -26,7 +26,32 @@
 
 ---
 
-## 📦 Installation
+## 🖥️ Desktop App
+
+GHX is also a desktop app for Windows, macOS and Linux. It shares the same accounts and config as the CLI.
+
+| Platform | Download |
+| --- | --- |
+| macOS (Apple Silicon) | [GHX-mac-arm64.dmg](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-mac-arm64.dmg) |
+| macOS (Intel) | [GHX-mac-x64.dmg](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-mac-x64.dmg) |
+| Windows | [GHX-Setup-x64.exe](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-Setup-x64.exe) |
+| Linux (AppImage) | [GHX-linux-x86_64.AppImage](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-linux-x86_64.AppImage) |
+| Linux (Debian/Ubuntu) | [GHX-linux-amd64.deb](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-linux-amd64.deb) |
+
+What it does:
+
+- **Detects existing setups**: finds GitHub keys and `~/.ssh/config` hosts already on your computer and imports them in one click.
+- **Guided account setup**: creates the key, copies it for you, opens GitHub, and verifies the connection.
+- **Delete any account**: removes GHX accounts or unmanaged setups, optionally with their key files.
+- **Repository sync**: searchable repo list with owner filters and live clone/update progress.
+
+> The apps are not yet signed with an Apple Developer ID or Windows certificate. On macOS, right-click the app and choose **Open** the first time (or allow it under **System Settings → Privacy & Security**). On Windows, choose **More info → Run anyway** in SmartScreen.
+
+Run it from source with `npm install && npm run desktop`.
+
+---
+
+## 📦 CLI Installation
 
 ### Windows (PowerShell)
 

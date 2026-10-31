@@ -24,6 +24,8 @@
     "format": "prettier --write src/**",
     "build": "node scripts/build-binaries.js",
     "build:binaries": "node scripts/build-binaries.js",
+    "desktop": "electron desktop/main.js",
+    "desktop:dist": "electron-builder --publish never",
     "check:version": "node scripts/check-version.js",
     "release": "release-it"
   },
@@ -33,6 +35,76 @@
       "package.json"
     ],
     "outputPath": "dist"
+  },
+  "build": {
+    "appId": "com.purshottamjain.ghx",
+    "productName": "GHX",
+    "copyright": "Copyright © 2026 Purshottam Jain",
+    "directories": {
+      "output": "dist-desktop",
+      "buildResources": "build"
+    },
+    "files": [
+      "desktop/**",
+      "src/**",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "desktop/main.js"
+    },
+    "artifactName": "GHX-${os}-${arch}.${ext}",
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.developer-tools",
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "artifactName": "GHX-mac-${arch}.${ext}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "GHX-Setup-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Development",
+      "maintainer": "Purshottam Jain <purshottam-jain24@users.noreply.github.com>",
+      "synopsis": "GitHub multi-account manager"
+    },
+    "publish": null
   },
   "keywords": [
     "github",
@@ -56,6 +128,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@release-it/conventional-changelog": "^10.0.4",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

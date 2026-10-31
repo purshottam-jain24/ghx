@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://github.com https://avatars.githubusercontent.com; connect-src 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GHX</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="drag-strip"></div>
+        <div class="brand">
+          <div class="brand-mark" id="brand-mark"></div>
+          <div>
+            <div class="brand-name">GHX</div>
+            <div class="brand-sub">GitHub Account Manager</div>
+          </div>
+        </div>
+        <nav class="nav" id="nav"></nav>
+        <div class="sidebar-foot" id="sidebar-foot"></div>
+      </aside>
+      <main class="main">
+        <div class="drag-strip"></div>
+        <div class="view" id="view"></div>
+      </main>
+    </div>
+    <div class="toasts" id="toasts"></div>
+    <div class="modal-root" id="modal-root"></div>
+    <script src="icons.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
