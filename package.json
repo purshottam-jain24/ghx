@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/purshottam-jain24/ghx.git"
+    "url": "git+https://github.com/purshottam-jain24/ghx.git"
   },
   "homepage": "https://github.com/purshottam-jain24/ghx#readme",
   "bugs": {
