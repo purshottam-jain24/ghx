@@ -178,11 +178,15 @@ jobs:
           ' CHANGELOG.md > notes.md || true
           [ -s notes.md ] || echo "Release v$VERSION" > notes.md
 
+          cp install/* artifacts/
+          # Checksums so downloads can be verified (shasum -a 256 -c SHA256SUMS.txt)
+          (cd artifacts && sha256sum * > SHA256SUMS.txt)
+
           gh release create "v$VERSION" \
             --title "v$VERSION" \
             --notes-file notes.md \
             --verify-tag \
-            artifacts/* install/*
+            artifacts/*
 
       - uses: actions/setup-node@v4
         with:

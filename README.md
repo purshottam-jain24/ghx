@@ -45,7 +45,14 @@ What it does:
 - **Delete any account**: removes GHX accounts or unmanaged setups, optionally with their key files.
 - **Repository sync**: searchable repo list with owner filters and live clone/update progress.
 
-> Until the release workflow has signing certificates (see below), macOS asks for confirmation the first time: right-click the app and choose **Open**, or allow it under **System Settings → Privacy & Security**. On Windows, choose **More info → Run anyway** in SmartScreen.
+**First launch on macOS:** open the `.dmg`, drag **GHX** into **Applications**, and open it. If macOS says it can't verify the developer:
+
+- **macOS 15 and later:** open **System Settings › Privacy & Security**, scroll down and click **Open Anyway**.
+- **macOS 14 and earlier:** right-click GHX in Applications and choose **Open**.
+
+You only need to do this once. On Windows, choose **More info › Run anyway** if SmartScreen appears.
+
+Every release includes `SHA256SUMS.txt`. To verify a download: `shasum -a 256 -c SHA256SUMS.txt --ignore-missing`.
 
 ### Code signing (maintainers)
 
