@@ -11,12 +11,12 @@ OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 
 if [[ "$OS" == "darwin" ]]; then
-  BIN_NAME="ghx-tool-macos"
-  # if [[ "$ARCH" == "arm64" ]]; then
-  #   BIN_NAME="ghx-macos-arm64"
-  # else
-  #   BIN_NAME="ghx-macos-x64"
-  # fi
+  # uname -m reports x86_64 under Rosetta, so also ask the hardware
+  if [[ "$ARCH" == "arm64" ]] || [[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" == "1" ]]; then
+    BIN_NAME="ghx-tool-macos-arm64"
+  else
+    BIN_NAME="ghx-tool-macos"
+  fi
 else
   BIN_NAME="ghx-tool-linux"
 fi

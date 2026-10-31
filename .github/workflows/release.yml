@@ -11,7 +11,35 @@ permissions:
   packages: write
 
 jobs:
+  # Apple Silicon binaries must be signed, which pkg only does on a macOS host
+  build-macos-arm64:
+    runs-on: macos-latest
+    if: "!contains(github.event.head_commit.message, 'chore(release):') && !contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build macOS arm64 binary
+        run: npm run build:binaries -- macos-arm64
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghx-tool-macos-arm64
+          path: dist/ghx-tool-macos-arm64
+          if-no-files-found: error
+
   release:
+    needs: build-macos-arm64
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'chore(release):') && !contains(github.event.head_commit.message, '[skip ci]')"
 
@@ -37,7 +65,13 @@ jobs:
         run: npm ci
 
       - name: Build binaries
-        run: npm run build:binaries
+        run: npm run build:binaries -- x64
+
+      - name: Download macOS arm64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: ghx-tool-macos-arm64
+          path: dist
 
       - name: Release
         env:
