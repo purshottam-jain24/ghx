@@ -17,6 +17,13 @@
   "bin": {
     "ghx": "bin/ghx.js"
   },
+  "files": [
+    "bin/",
+    "src/",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src bin desktop scripts",
