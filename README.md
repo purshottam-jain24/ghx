@@ -2,7 +2,11 @@
 
 > **Manage multiple GitHub accounts, SSH keys, and repositories effortlessly.**
 
-**GHX** is a powerful CLI designed to solve the pain of switching between Work, Personal, and Client GitHub accounts. It handles SSH keys, Git configs, and repo syncing automatically—so you never commit with the wrong email again.
+<p align="center">
+  <img src="docs/screenshots/accounts.png" alt="GHX desktop app showing three GitHub accounts and two setups detected on the computer" width="860">
+</p>
+
+**GHX** is a desktop app and CLI designed to solve the pain of switching between Work, Personal, and Client GitHub accounts. It handles SSH keys, Git configs, and repo syncing automatically—so you never commit with the wrong email again.
 
 ---
 
@@ -37,6 +41,25 @@ GHX is also a desktop app for Windows, macOS and Linux. It shares the same accou
 | Windows | [GHX-Setup-x64.exe](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-Setup-x64.exe) |
 | Linux (AppImage) | [GHX-linux-x86_64.AppImage](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-linux-x86_64.AppImage) |
 | Linux (Debian/Ubuntu) | [GHX-linux-amd64.deb](https://github.com/purshottam-jain24/ghx/releases/latest/download/GHX-linux-amd64.deb) |
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/add-account.png" alt="Add-account wizard showing the new public key and steps to add it to GitHub"></td>
+    <td width="50%"><img src="docs/screenshots/verified.png" alt="Add-account wizard confirming GitHub accepted the key"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Guided setup: the key is created and copied for you</sub></td>
+    <td align="center"><sub>Connection verified, ready to clone</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/repositories.png" alt="Repository picker with owner filters in dark mode"></td>
+    <td width="50%"><img src="docs/screenshots/sync.png" alt="Live clone and update progress in dark mode"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Pick repositories by owner, in light or dark mode</sub></td>
+    <td align="center"><sub>Live clone and update progress</sub></td>
+  </tr>
+</table>
 
 What it does:
 

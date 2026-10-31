@@ -23,11 +23,35 @@ fi
 
 mkdir -p "$INSTALL_DIR"
 
+TMP_BINARY="$(mktemp)"
+trap 'rm -f "$TMP_BINARY"' EXIT
+
 echo "⬇️ Downloading GHX ($BIN_NAME)..."
-if ! curl --progress-bar -fL "$BASE_URL/$BIN_NAME" -o "$BINARY"; then
+if ! curl --progress-bar -fL "$BASE_URL/$BIN_NAME" -o "$TMP_BINARY"; then
     echo "❌ Download failed. Does '$BIN_NAME' exist in the GitHub Release?"
     exit 1
 fi
+
+# Verify the download against the release's published SHA-256
+EXPECTED="$(curl -fsSL "$BASE_URL/$BIN_NAME.sha256" 2>/dev/null | awk '{print $1}')"
+if [[ -n "$EXPECTED" ]]; then
+  if command -v sha256sum >/dev/null 2>&1; then
+    ACTUAL="$(sha256sum "$TMP_BINARY" | awk '{print $1}')"
+  else
+    ACTUAL="$(shasum -a 256 "$TMP_BINARY" | awk '{print $1}')"
+  fi
+  if [[ "$ACTUAL" != "$EXPECTED" ]]; then
+    echo "❌ Checksum mismatch: the download may be corrupted or tampered with."
+    echo "   expected $EXPECTED"
+    echo "   got      $ACTUAL"
+    exit 1
+  fi
+  echo "🔒 Checksum verified (SHA-256)."
+else
+  echo "⚠️  No checksum published for this release; skipping verification."
+fi
+
+mv "$TMP_BINARY" "$BINARY"
 chmod +x "$BINARY"
 
 SHELL_CONFIG=""

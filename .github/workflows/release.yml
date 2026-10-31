@@ -179,8 +179,14 @@ jobs:
           [ -s notes.md ] || echo "Release v$VERSION" > notes.md
 
           cp install/* artifacts/
-          # Checksums so downloads can be verified (shasum -a 256 -c SHA256SUMS.txt)
-          (cd artifacts && sha256sum * > SHA256SUMS.txt)
+          # One <file>.sha256 per download (the CLI installers verify these)
+          # plus a combined SHA256SUMS.txt
+          (
+            cd artifacts
+            files=(*)
+            for f in "${files[@]}"; do sha256sum "$f" > "$f.sha256"; done
+            sha256sum "${files[@]}" > SHA256SUMS.txt
+          )
 
           gh release create "v$VERSION" \
             --title "v$VERSION" \

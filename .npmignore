@@ -26,3 +26,4 @@ pnpm-lock.yaml
 # then we don't strictly need to ignore everything, but let's keep it clean.
 # Ensure 'bin' folder is NOT ignored.
 dist/
+docs/
