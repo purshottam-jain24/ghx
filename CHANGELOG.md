@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.1](https://github.com/purshottam-jain24/ghx/compare/v2.2.0...v2.2.1) (2026-10-31)
+
+### Bug Fixes
+
+* whitelist npm package files ([3a785ff](https://github.com/purshottam-jain24/ghx/commit/3a785ff99cf078eb9e5ef9251e9fafb959462ad8))
+
 ## [2.2.0](https://github.com/purshottam-jain24/ghx/compare/v0.1.1...v2.2.0) (2026-10-31)
 
 ### Features
