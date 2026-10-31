@@ -1,16 +1,15 @@
 const inquirer = require("inquirer");
 const chalk = require("chalk");
 const fs = require("fs-extra");
-const path = require("path");
-const { loadConfig } = require("../config/loadConfig");
-const { saveConfig } = require("../config/saveConfig");
-const { SSH_DIR, GHX_DIR } = require("../utils/paths");
-const { removeHostFromConfig } = require("../ssh/config");
+const {
+  listAccounts,
+  removeAccount: removeAccountCore,
+} = require("../core/accounts");
 
 async function removeAccount() {
-  const config = await loadConfig();
+  const accounts = await listAccounts();
 
-  if (config.accounts.length === 0) {
+  if (accounts.length === 0) {
     console.log(chalk.yellow("No accounts to remove."));
     return;
   }
@@ -20,14 +19,14 @@ async function removeAccount() {
       type: "list",
       name: "accountId",
       message: "Select account to remove:",
-      choices: config.accounts.map((acc) => ({
+      choices: accounts.map((acc) => ({
         name: `${acc.username} (${acc.id})`,
         value: acc.id,
       })),
     },
   ]);
 
-  const account = config.accounts.find((a) => a.id === accountId);
+  const account = accounts.find((a) => a.id === accountId);
   if (!account) return;
 
   const { confirm } = await inquirer.prompt([
@@ -44,42 +43,35 @@ async function removeAccount() {
     return;
   }
 
-  config.accounts = config.accounts.filter((a) => a.id !== accountId);
-  await saveConfig(config);
-
-  try {
-    const { removeHostFromConfig } = require("../ssh/config");
-    await removeHostFromConfig(account.sshHost);
-    console.log(
-      chalk.green(`Removed host ${account.sshHost} from SSH config.`)
-    );
-  } catch (err) {
-    console.log(
-      chalk.yellow(
-        "Note: Could not automatically remove host from SSH config (function might be missing)."
-      )
-    );
-  }
-
+  let deleteKey = false;
   if (account.sshKey && (await fs.pathExists(account.sshKey))) {
-    const { deleteKey } = await inquirer.prompt([
+    ({ deleteKey } = await inquirer.prompt([
       {
         type: "confirm",
         name: "deleteKey",
         message: `Do you want to delete the SSH key file (${account.sshKey})?`,
         default: false,
       },
-    ]);
+    ]));
+  }
 
-    if (deleteKey) {
-      try {
-        await fs.remove(account.sshKey);
-        await fs.remove(`${account.sshKey}.pub`);
-        console.log(chalk.green("SSH key files deleted."));
-      } catch (err) {
-        console.error(chalk.red(`Failed to delete key files: ${err.message}`));
-      }
+  try {
+    const result = await removeAccountCore(accountId, { deleteKey });
+    if (result.warnings.length) {
+      console.log(
+        chalk.yellow(
+          "Note: Could not automatically remove host from SSH config."
+        )
+      );
+    } else {
+      console.log(
+        chalk.green(`Removed host ${account.sshHost} from SSH config.`)
+      );
     }
+    if (result.keyDeleted) console.log(chalk.green("SSH key files deleted."));
+  } catch (err) {
+    console.error(chalk.red(`Failed to remove account: ${err.message}`));
+    return;
   }
 
   console.log(
