@@ -107,11 +107,41 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      # Signs with real certificates when the secrets below exist; otherwise
+      # macOS gets an ad-hoc signature and Windows stays unsigned.
       - name: Build desktop app
-        run: npm run desktop:dist -- ${{ matrix.target }}
+        shell: bash
         env:
-          # No Apple/Windows signing certificates yet: ad-hoc sign on macOS only
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+          MAC_CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          MAC_CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          MAC_CSC_NAME: ${{ secrets.MAC_CSC_NAME }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: |
+          args=(${{ matrix.target }})
+          [ -n "$APPLE_ID" ] || unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+          case "$RUNNER_OS" in
+            macOS)
+              if [ -n "$MAC_CSC_LINK" ]; then
+                export CSC_LINK="$MAC_CSC_LINK" CSC_KEY_PASSWORD="$MAC_CSC_KEY_PASSWORD"
+                args+=("-c.mac.identity=$MAC_CSC_NAME" "-c.mac.hardenedRuntime=true")
+              else
+                echo "::warning::No MAC_CSC_LINK secret: macOS app is ad-hoc signed and not notarized"
+                export CSC_IDENTITY_AUTO_DISCOVERY=false
+              fi
+              ;;
+            Windows)
+              if [ -n "$WIN_CSC_LINK" ]; then
+                export CSC_LINK="$WIN_CSC_LINK" CSC_KEY_PASSWORD="$WIN_CSC_KEY_PASSWORD"
+              else
+                echo "::warning::No WIN_CSC_LINK secret: Windows installer is unsigned"
+              fi
+              ;;
+          esac
+          npm run desktop:dist -- "${args[@]}"
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.os }}

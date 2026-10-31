@@ -6,7 +6,6 @@
 
 const inquirer = require("inquirer");
 const chalk = require("chalk");
-const { loadConfig } = require("../config/loadConfig");
 
 async function showMenu() {
   console.clear();

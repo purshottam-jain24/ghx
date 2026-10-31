@@ -2340,7 +2340,7 @@ function renderSettings() {
 async function boot() {
   try {
     state.info = await api.info();
-  } catch (e) {
+  } catch {
     state.info = {
       platform: "",
       homeDir: "",

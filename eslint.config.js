@@ -1,5 +1,6 @@
-// eslint.config.cjs
+// eslint.config.js
 const js = require("@eslint/js");
+const globals = require("globals");
 const prettier = require("eslint-plugin-prettier");
 
 module.exports = [
@@ -7,14 +8,9 @@ module.exports = [
 
   {
     languageOptions: {
-      ecmaVersion: 2021,
+      ecmaVersion: 2022,
       sourceType: "commonjs",
-      globals: {
-        process: "readonly",
-        module: "readonly",
-        require: "readonly",
-        __dirname: "readonly",
-      },
+      globals: globals.node,
     },
 
     plugins: {
@@ -25,6 +21,15 @@ module.exports = [
       "no-console": "off",
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "prettier/prettier": "warn",
+    },
+  },
+
+  // Desktop renderer runs in a sandboxed browser context
+  {
+    files: ["desktop/renderer/**/*.js"],
+    languageOptions: {
+      sourceType: "script",
+      globals: { ...globals.browser, module: "writable" },
     },
   },
 ];

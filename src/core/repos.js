@@ -35,7 +35,7 @@ async function resolveTargetFolder(baseDir, repo) {
         if (!origin || !origin.refs.fetch.includes(repo.full_name)) {
           isConflict = true;
         }
-      } catch (e) {
+      } catch {
         isConflict = true;
       }
     } else {

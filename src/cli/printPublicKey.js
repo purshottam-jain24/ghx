@@ -4,7 +4,7 @@ async function printPublicKey(publicKey, title) {
   try {
     await require("clipboardy").write(publicKey);
     console.log(chalk.green.bold("\n✅ Public Key copied to clipboard!"));
-  } catch (clipErr) {
+  } catch {
     console.log(chalk.red("\nCould not auto-copy to clipboard."));
   }
 

@@ -45,7 +45,21 @@ What it does:
 - **Delete any account**: removes GHX accounts or unmanaged setups, optionally with their key files.
 - **Repository sync**: searchable repo list with owner filters and live clone/update progress.
 
-> The apps are not yet signed with an Apple Developer ID or Windows certificate. On macOS, right-click the app and choose **Open** the first time (or allow it under **System Settings → Privacy & Security**). On Windows, choose **More info → Run anyway** in SmartScreen.
+> Until the release workflow has signing certificates (see below), macOS asks for confirmation the first time: right-click the app and choose **Open**, or allow it under **System Settings → Privacy & Security**. On Windows, choose **More info → Run anyway** in SmartScreen.
+
+### Code signing (maintainers)
+
+The release workflow signs the apps automatically when these repository secrets exist:
+
+| Secret | Purpose |
+| --- | --- |
+| `MAC_CSC_LINK` | Base64 of your **Developer ID Application** `.p12` |
+| `MAC_CSC_KEY_PASSWORD` | Password of that `.p12` |
+| `MAC_CSC_NAME` | Certificate name, e.g. `Your Name (TEAMID)` |
+| `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` | Notarization with Apple |
+| `WIN_CSC_LINK`, `WIN_CSC_KEY_PASSWORD` | Windows code-signing certificate (`.pfx`, base64) and password |
+
+Without them, macOS builds are ad-hoc signed and Windows builds are unsigned.
 
 Run it from source with `npm install && npm run desktop`.
 

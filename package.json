@@ -19,9 +19,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src/**",
-    "lint:fix": "eslint src/** --fix",
-    "format": "prettier --write src/**",
+    "lint": "eslint src bin desktop scripts",
+    "lint:fix": "eslint src bin desktop scripts --fix",
+    "format": "prettier --write src bin desktop scripts",
     "build": "node scripts/build-binaries.js",
     "build:binaries": "node scripts/build-binaries.js",
     "desktop": "electron desktop/main.js",
@@ -101,7 +101,7 @@
         }
       ],
       "category": "Development",
-      "maintainer": "Purshottam Jain <purshottam-jain24@users.noreply.github.com>",
+      "maintainer": "Purshottam Jain <purshotamjaindelhi11@gmail.com>",
       "synopsis": "GitHub multi-account manager"
     },
     "publish": null
@@ -133,6 +133,7 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^14.0.0",
     "pkg": "^5.8.1",
     "prettier": "^3.7.4",
     "release-it": "^19.2.2"
